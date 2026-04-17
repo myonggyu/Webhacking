@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}로그인 — WriteUp{% endblock %}
+{% block content %}
+
+<div class="form-page">
+  <div class="form-box">
+    <span class="form-box-logo">WriteUp</span>
+    <h2>다시 만나서 반가워요</h2>
+    <p class="form-sub">계속하려면 로그인해주세요.</p>
+
+    <form method="POST">
+      <div class="form-group">
+        <label>아이디</label>
+        <input type="text" name="username" placeholder="아이디를 입력하세요" required autofocus>
+      </div>
+      <div class="form-group">
+        <label>비밀번호</label>
+        <input type="password" name="password" placeholder="비밀번호를 입력하세요" required>
+      </div>
+      <button type="submit" class="btn-submit">로그인</button>
+    </form>
+
+    <p class="form-footer">
+      계정이 없으신가요? <a href="{{ url_for('auth.register') }}">회원가입</a>
+    </p>
+  </div>
+</div>
+
+{% endblock %}

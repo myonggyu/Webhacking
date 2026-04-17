@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}WriteUp{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="{{ url_for('board.index') }}" class="nav-logo">WriteUp</a>
+
+      <div class="nav-right">
+        {% if session.get('username') %}
+          <a href="{{ url_for('board.index') }}" class="nav-link nav-link-home">홈</a>
+          <span class="nav-badge">{{ session['username'] }}</span>
+          {% if session.get('is_admin') %}
+            <a href="{{ url_for('admin.dashboard') }}" class="nav-link">관리자</a>
+          {% endif %}
+          <a href="{{ url_for('auth.logout') }}" class="nav-link">로그아웃</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}" class="nav-link">로그인</a>
+          <a href="{{ url_for('auth.register') }}" class="nav-btn">회원가입</a>
+        {% endif %}
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash">
+          {% for msg in messages %}<li>{{ msg }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

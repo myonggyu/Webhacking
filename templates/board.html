@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}게시판 — WriteUp{% endblock %}
+{% block content %}
+
+<!-- 히어로 -->
+<section class="hero">
+  <div class="hero-eyebrow">커뮤니티 게시판</div>
+  <h1>생각을 나누는<br>공간, WriteUp</h1>
+  <p>자유롭게 글을 쓰고 서로의 이야기를 나눠보세요.<br>모든 목소리는 여기서 시작됩니다.</p>
+  <a href="{{ url_for('board.write') }}" class="hero-cta">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 5v14M5 12h14"/>
+    </svg>
+    새 글 작성하기
+  </a>
+</section>
+
+<!-- 스탯 바 -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-number">{{ posts | length }}</div>
+    <div class="stat-label">전체 게시글</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">{{ posts | selectattr('author_id') | list | length }}</div>
+    <div class="stat-label">오늘의 글</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">∞</div>
+    <div class="stat-label">가능성</div>
+  </div>
+</div>
+
+<!-- 게시판 목록 -->
+<div class="board-section-header">
+  <h2 class="section-title">최신 <span>게시글</span></h2>
+  <a href="{{ url_for('board.write') }}" class="btn-write">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M12 5v14M5 12h14"/>
+    </svg>
+    글쓰기
+  </a>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th class="td-num">#</th>
+        <th>제목</th>
+        <th class="td-author">작성자</th>
+        <th class="td-date">작성일</th>
+        <th class="td-action">삭제</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for post in posts %}
+      <tr>
+        <td class="td-num">{{ post['id'] }}</td>
+        <td class="td-title">{{ post['title'] }}</td>
+        <td class="td-author">{{ post['username'] }}</td>
+        <td class="td-date">{{ post['created_at'] }}</td>
+        <td class="td-action">
+          {% if session.get('user_id') == post['author_id'] or session.get('is_admin') %}
+          <form method="POST"
+                action="{{ url_for('board.delete', post_id=post['id']) }}"
+                onsubmit="return confirm('이 게시글을 삭제하시겠습니까?')">
+            <button type="submit" class="btn-del">삭제</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr class="empty-row">
+        <td colspan="5">아직 게시글이 없습니다. 첫 번째 글을 작성해보세요!</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

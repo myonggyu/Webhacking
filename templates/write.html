@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}글쓰기 — WriteUp{% endblock %}
+{% block content %}
+
+<div class="write-page">
+  <div class="write-header">
+    <h2>새 글 작성</h2>
+    <p>자유롭게 생각을 담아 글을 작성해보세요.</p>
+  </div>
+
+  <form method="POST">
+    <div class="write-box">
+
+      <div class="write-field">
+        <label>제목</label>
+        <input type="text" name="title" placeholder="글의 제목을 입력하세요" required autofocus>
+      </div>
+
+      <div class="write-field">
+        <label>내용</label>
+        <textarea name="content" placeholder="여기에 내용을 자유롭게 작성하세요..." required></textarea>
+      </div>
+
+      <div class="write-actions">
+        <a href="{{ url_for('board.index') }}" class="btn-cancel">취소</a>
+        <button type="submit" class="btn-post">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+          게시하기
+        </button>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+{% endblock %}
