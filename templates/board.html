@@ -4,7 +4,6 @@
 
 <!-- 히어로 -->
 <section class="hero">
-  <div class="hero-eyebrow">커뮤니티 게시판</div>
   <h1>생각을 나누는<br>공간, WriteUp</h1>
   <p>자유롭게 글을 쓰고 서로의 이야기를 나눠보세요.<br>모든 목소리는 여기서 시작됩니다.</p>
   <a href="{{ url_for('board.write') }}" class="hero-cta">
@@ -23,12 +22,16 @@
     <div class="stat-label">전체 게시글</div>
   </div>
   <div class="stat-item">
-    <div class="stat-number">{{ posts | selectattr('author_id') | list | length }}</div>
+    <div class="stat-number">
+      {% set ns = namespace(count=0) %}
+      {% for post in posts %}
+        {% if post['created_at'][:10] == now_date %}
+          {% set ns.count = ns.count + 1 %}
+        {% endif %}
+      {% endfor %}
+      {{ ns.count }}
+    </div>
     <div class="stat-label">오늘의 글</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-number">∞</div>
-    <div class="stat-label">가능성</div>
   </div>
 </div>
 
@@ -56,9 +59,10 @@
       </tr>
     </thead>
     <tbody>
+      {% set total = posts | length %}
       {% for post in posts %}
       <tr>
-        <td class="td-num">{{ post['id'] }}</td>
+        <td class="td-num">{{ total - loop.index0 }}</td>
         <td class="td-title">{{ post['title'] }}</td>
         <td class="td-author">{{ post['username'] }}</td>
         <td class="td-date">{{ post['created_at'] }}</td>

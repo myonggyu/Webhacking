@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, abort
 from models import get_all_posts, get_post, create_post, delete_post
+from datetime import date
 
 board = Blueprint('board', __name__)
 
@@ -15,7 +16,8 @@ def index():
     if redirect_response:
         return redirect_response
     posts = get_all_posts()
-    return render_template('board.html', posts=posts)
+    # 오늘 날짜를 템플릿에 넘겨 '오늘의 글' 카운트에 활용
+    return render_template('board.html', posts=posts, now_date=str(date.today()))
 
 @board.route('/write', methods=['GET', 'POST'])
 def write():

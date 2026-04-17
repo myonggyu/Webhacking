@@ -81,7 +81,7 @@ header nav {
 /* 로고 */
 .nav-logo {
   font-family: var(--font-disp);
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 900;
   background: linear-gradient(135deg, #fff 30%, var(--accent2));
   -webkit-background-clip: text;
@@ -95,45 +95,37 @@ header nav {
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.nav-right span {
-  color: var(--muted);
-  font-size: 13px;
-  padding: 0 12px;
+  gap: 8px;
 }
 
 .nav-link {
-  color: var(--muted);
-  font-size: 14px;
+  color: #c4c6d8;
+  font-size: 16px;
   font-weight: 500;
-  padding: 8px 14px;
+  padding: 8px 16px;
   border-radius: 8px;
   transition: all 0.2s;
 }
-.nav-link:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+.nav-link:hover { color: #fff; background: rgba(255,255,255,0.08); }
 
-.nav-link-home {
-  color: var(--text);
-}
+.nav-link-home { color: #fff; }
 
 .nav-badge {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--accent2);
-  background: rgba(108,99,255,0.15);
-  border: 1px solid rgba(108,99,255,0.3);
-  padding: 6px 14px;
+  background: rgba(108,99,255,0.18);
+  border: 1px solid rgba(108,99,255,0.35);
+  padding: 7px 16px;
   border-radius: 20px;
 }
 
 .nav-btn {
   background: var(--accent);
   color: #fff;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
-  padding: 8px 18px;
+  padding: 9px 20px;
   border-radius: 8px;
   transition: all 0.2s;
   border: none;
