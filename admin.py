@@ -1,30 +1,26 @@
-from flask import Blueprint, render_template, redirect, url_for, session, flash, abort
-from models import get_all_users, get_all_posts, delete_user, delete_post
+# 관리자만 접근 가능한 사용자/게시글 현황 페이지를 담당하는 파일입니다.
+from flask import Blueprint, render_template, session, redirect, url_for, flash
+from models import get_all_users, get_all_posts, get_total_posts_count, get_today_posts_count
 
-admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
-def admin_required():
-    if not session.get('is_admin'):
-        abort(403)
 
-@admin_bp.route('/')
-def dashboard():
-    admin_required()
+@admin_bp.route("/")
+def admin_home():
+    # 관리자 페이지에서 전체 사용자와 게시글 현황을 보여줍니다.
+    if session.get("role") != "admin":
+        flash("관리자만 접근할 수 있습니다.")
+        return redirect(url_for("board.index"))
+
     users = get_all_users()
     posts = get_all_posts()
-    return render_template('admin.html', users=users, posts=posts)
+    total_posts = get_total_posts_count()
+    today_posts = get_today_posts_count()
 
-@admin_bp.route('/delete_user/<int:user_id>', methods=['POST'])
-def remove_user(user_id):
-    admin_required()
-    if user_id == session['user_id']:
-        flash('자기 자신은 삭제할 수 없습니다.')
-        return redirect(url_for('admin.dashboard'))
-    delete_user(user_id)
-    return redirect(url_for('admin.dashboard'))
-
-@admin_bp.route('/delete_post/<int:post_id>', methods=['POST'])
-def remove_post(post_id):
-    admin_required()
-    delete_post(post_id)
-    return redirect(url_for('admin.dashboard'))
+    return render_template(
+        "admin.html",
+        users=users,
+        posts=posts,
+        total_posts=total_posts,
+        today_posts=today_posts
+    )

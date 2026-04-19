@@ -1,0 +1,28 @@
+<!-- 제목을 클릭했을 때 게시글 상세 내용을 보여주는 템플릿입니다. -->
+{% extends "base.html" %}
+
+{% block title %}{{ post['title'] }} - WriteUp{% endblock %}
+
+{% block content %}
+<!-- 상세 페이지 상단: 목록으로 돌아가는 링크를 제공합니다. -->
+<section class="detail-wrap">
+    <a href="{{ url_for('board.board_list') }}" class="back-link">← 목록으로 돌아가기</a>
+
+    <!-- 게시글 본문 영역: 제목, 작성자, 작성일, 내용을 출력합니다. -->
+    <article class="detail-card">
+        <h1 class="detail-title">{{ post['title'] }}</h1>
+        <div class="detail-meta">
+            작성자: {{ post['author'] }} | 작성일: {{ post['created_at'] }}
+        </div>
+
+        <div class="detail-content">{{ post['content'] }}</div>
+
+        <!-- 삭제 버튼 영역: 작성자 본인 또는 관리자만 삭제할 수 있습니다. -->
+        {% if session.get('role') == 'admin' or session.get('username') == post['author'] %}
+        <form action="{{ url_for('board.remove_post', post_id=post['id']) }}" method="POST" class="detail-delete-form">
+            <button type="submit" class="btn-delete">삭제</button>
+        </form>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

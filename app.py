@@ -1,20 +1,27 @@
+# Flask 앱을 생성하고 각 기능별 블루프린트를 등록하는 파일입니다.
 from flask import Flask
-from db import init_db, close_db, get_db
-from auth import auth
-from board import board
+from db import init_db
+from auth import auth_bp
+from board import board_bp
 from admin import admin_bp
 
-app = Flask(__name__)
-app.secret_key = 'your-secret-key-change-this'
 
-# 블루프린트 등록
-app.register_blueprint(auth)
-app.register_blueprint(board)
-app.register_blueprint(admin_bp)
+def create_app():
+    # 애플리케이션 기본 설정과 DB 초기화를 수행하는 함수입니다.
+    app = Flask(__name__)
+    app.config["SECRET_KEY"] = "change-this-secret-key"
 
-# DB 연결 해제 등록
-app.teardown_appcontext(close_db)
+    init_db()
 
-if __name__ == '__main__':
-    init_db()        # DB 테이블 생성 및 관리자 계정 초기화
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(board_bp)
+    app.register_blueprint(admin_bp)
+
+    return app
+
+
+app = create_app()
+
+if __name__ == "__main__":
+    # 개발용 서버를 실행합니다.
     app.run(debug=True)

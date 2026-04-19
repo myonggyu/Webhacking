@@ -1,75 +1,26 @@
-{% extends 'base.html' %}
-{% block title %}관리자 — WriteUp{% endblock %}
+<!-- 새 사용자가 회원가입할 수 있는 폼 템플릿입니다. -->
+{% extends "base.html" %}
+
+{% block title %}회원가입 - WriteUp{% endblock %}
+
 {% block content %}
+<!-- 회원가입 입력 영역: 아이디와 비밀번호를 입력받아 계정을 생성합니다. -->
+<section class="form-wrap">
+    <div class="form-card small-card">
+        <h1>회원가입</h1>
 
-<h2 class="admin-title">관리자 대시보드</h2>
+        <form method="POST" class="write-form">
+            <label for="username">아이디</label>
+            <input type="text" id="username" name="username" required>
 
-<div class="admin-section">
-  <h3>회원 목록</h3>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th style="width:60px">ID</th>
-          <th>아이디</th>
-          <th style="width:80px">관리자</th>
-          <th style="width:80px">삭제</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for user in users %}
-        <tr>
-          <td class="td-num">{{ user['id'] }}</td>
-          <td>{{ user['username'] }}</td>
-          <td style="color:var(--accent2);font-size:13px">{{ '✔ 관리자' if user['is_admin'] else '' }}</td>
-          <td>
-            {% if user['id'] != session['user_id'] %}
-            <form method="POST"
-                  action="{{ url_for('admin.remove_user', user_id=user['id']) }}"
-                  onsubmit="return confirm('회원을 삭제하시겠습니까?')">
-              <button type="submit" class="btn-del">삭제</button>
-            </form>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" required>
 
-<div class="admin-section">
-  <h3>게시글 목록</h3>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th style="width:60px">ID</th>
-          <th>제목</th>
-          <th class="td-author">작성자</th>
-          <th style="width:80px">삭제</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for post in posts %}
-        <tr>
-          <td class="td-num">{{ post['id'] }}</td>
-          <td class="td-title">{{ post['title'] }}</td>
-          <td class="td-author">{{ post['username'] }}</td>
-          <td>
-            <form method="POST"
-                  action="{{ url_for('admin.remove_post', post_id=post['id']) }}"
-                  onsubmit="return confirm('게시글을 삭제하시겠습니까?')">
-              <button type="submit" class="btn-del">삭제</button>
-            </form>
-          </td>
-        </tr>
-        {% else %}
-        <tr class="empty-row"><td colspan="4">게시글이 없습니다.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
+            <label for="password_confirm">비밀번호 확인</label>
+            <input type="password" id="password_confirm" name="password_confirm" required>
 
+            <button type="submit" class="btn btn-primary btn-full">회원가입</button>
+        </form>
+    </div>
+</section>
 {% endblock %}

@@ -1,42 +1,56 @@
+<!-- 공통 레이아웃과 상단 메뉴를 정의하는 기본 템플릿입니다. -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}WriteUp{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WriteUp{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="{{ url_for('board.index') }}" class="nav-logo">WriteUp</a>
+    <!-- 상단 헤더 영역: 로고, 메뉴, 로그인 상태를 표시합니다. -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="{{ url_for('board.index') }}" class="logo">WriteUp</a>
 
-      <div class="nav-right">
-        {% if session.get('username') %}
-          <a href="{{ url_for('board.index') }}" class="nav-link nav-link-home">홈</a>
-          <span class="nav-badge">{{ session['username'] }}</span>
-          {% if session.get('is_admin') %}
-            <a href="{{ url_for('admin.dashboard') }}" class="nav-link">관리자</a>
-          {% endif %}
-          <a href="{{ url_for('auth.logout') }}" class="nav-link">로그아웃</a>
-        {% else %}
-          <a href="{{ url_for('auth.login') }}" class="nav-link">로그인</a>
-          <a href="{{ url_for('auth.register') }}" class="nav-btn">회원가입</a>
-        {% endif %}
-      </div>
-    </nav>
-  </header>
+            <nav class="nav">
+                <a href="{{ url_for('board.index') }}">홈</a>
+                <a href="{{ url_for('board.board_list') }}">게시판</a>
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('board.write') }}">글쓰기</a>
+                {% endif %}
+                {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('admin.admin_home') }}">관리자</a>
+                {% endif %}
+            </nav>
 
-  <main>
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class="flash">
-          {% for msg in messages %}<li>{{ msg }}</li>{% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+            <div class="auth-links">
+                {% if session.get('user_id') %}
+                    <span class="welcome">{{ session.get('username') }}님</span>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline">로그아웃</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline">로그인</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary">회원가입</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
 
-    {% block content %}{% endblock %}
-  </main>
+    <!-- 본문 영역: 각 페이지의 실제 내용을 표시합니다. -->
+    <main class="main-area">
+        <div class="container">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-wrap">
+                        {% for message in messages %}
+                            <div class="flash-message">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 </body>
 </html>

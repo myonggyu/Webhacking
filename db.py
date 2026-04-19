@@ -1,54 +1,56 @@
+# SQLite 데이터베이스 연결과 테이블 생성을 담당하는 파일입니다.
+import os
 import sqlite3
-from flask import g
+from werkzeug.security import generate_password_hash
 
-DATABASE = 'board.db'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "writeup.db")
 
-def get_db():
-    if 'db' not in g:
-        g.db = sqlite3.connect(DATABASE)
-        g.db.row_factory = sqlite3.Row
-    return g.db
 
-def close_db(e=None):
-    db = g.pop('db', None)
-    if db is not None:
-        db.close()
+def get_db_connection():
+    # SQLite 연결 객체를 생성하고 Row 방식으로 결과를 반환합니다.
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
 
 def init_db():
-    db = sqlite3.connect(DATABASE)
-    db.row_factory = sqlite3.Row
+    # users, posts 테이블을 만들고 관리자 계정을 최초 1회 생성합니다.
+    conn = get_db_connection()
+    cur = conn.cursor()
 
-    db.execute('''
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
-            id       INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT    NOT NULL UNIQUE,
-            password TEXT    NOT NULL,
-            is_admin INTEGER NOT NULL DEFAULT 0
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'user',
+            created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
         )
-    ''')
+    """)
 
-    db.execute('''
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS posts (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            title      TEXT    NOT NULL,
-            content    TEXT    NOT NULL,
-            author_id  INTEGER NOT NULL,
-            created_at TEXT    NOT NULL DEFAULT (datetime('now', 'localtime')),
-            FOREIGN KEY (author_id) REFERENCES users(id)
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL,
+            author TEXT NOT NULL,
+            user_id INTEGER,
+            created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+            FOREIGN KEY (user_id) REFERENCES users(id)
         )
-    ''')
+    """)
 
-    # 관리자 계정 생성 (중복 방지)
-    existing = db.execute(
-        'SELECT id FROM users WHERE username = ?', ('admin',)
+    admin_user = cur.execute(
+        "SELECT id FROM users WHERE username = ?",
+        ("admin",)
     ).fetchone()
 
-    if not existing:
-        from werkzeug.security import generate_password_hash
-        db.execute(
-            'INSERT INTO users (username, password, is_admin) VALUES (?, ?, ?)',
-            ('admin', generate_password_hash('admin1234'), 1)
-        )
+    if admin_user is None:
+        cur.execute("""
+            INSERT INTO users (username, password, role)
+            VALUES (?, ?, ?)
+        """, ("admin", generate_password_hash("admin1234"), "admin"))
 
-    db.commit()
-    db.close()
+    conn.commit()
+    conn.close()
